@@ -450,3 +450,11 @@ footer ul a:hover{color:var(--accent);padding-left:4px}
 @media (max-width:640px){
   .works{grid-template-columns:1fr}
 }
+
+/* ---------- Tarifs sans prix : libellé "Sur devis" + blocs inclus/non inclus ---------- */
+.t-quote{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.t-quote .amt{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:700;color:var(--accent);line-height:1}
+.t-quote .note{font-size:.78rem;color:var(--muted)}
+.t-block-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin:16px 0 8px;color:var(--ink)}
+.t-block-label.pos{color:var(--accent-d)}
+.t-block-label.neg{color:#9a8e7f}
