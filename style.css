@@ -159,11 +159,11 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(21,48,47,.5)}
 /* ---------- CTA BANNER ---------- */
 .cta-band{position:relative;border-radius:26px;padding:52px 44px;text-align:center;overflow:hidden;color:#fff;
   background:linear-gradient(135deg,#007e8f,#00a5a5 50%,#0079bf)}
-.cta-band::before{content:"";position:absolute;top:-80px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%)}
-.cta-band::after{content:"";position:absolute;right:-70px;bottom:-90px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(203,176,79,.35),transparent 70%)}
+.cta-band::before{content:"";position:absolute;top:-80px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);pointer-events:none}
+.cta-band::after{content:"";position:absolute;right:-70px;bottom:-90px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(203,176,79,.35),transparent 70%);pointer-events:none}
 .cta-band h2{font-size:clamp(1.7rem,4vw,2.3rem);margin-bottom:12px;position:relative}
 .cta-band p{opacity:.94;max-width:520px;margin:0 auto 26px;position:relative}
-.cta-band .btn-primary{background:#fff;color:var(--accent-d);position:relative}
+.cta-band .btn-primary{background:#fff;color:var(--accent-d);position:relative;z-index:2}
 .cta-band .btn-primary:hover{background:#fff;color:var(--accent-d)}
 
 /* ---------- CONTACT ---------- */
@@ -458,3 +458,28 @@ footer ul a:hover{color:var(--accent);padding-left:4px}
 .t-block-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin:16px 0 8px;color:var(--ink)}
 .t-block-label.pos{color:var(--accent-d)}
 .t-block-label.neg{color:#9a8e7f}
+
+/* ============================================================
+   Correctif clics mobile : les cercles décoratifs (pseudo-éléments)
+   ne doivent jamais intercepter les clics sur les boutons.
+   ============================================================ */
+.hero::before,.hero::after,
+.page-hero::before,.page-hero::after,
+.about-visual::after,
+footer::before,
+.t-band::after,.band::after,
+.cta-band::before,.cta-band::after{pointer-events:none}
+
+/* Le contenu interactif des bannières passe au-dessus des décors */
+.cta-band .btn,.cta-band a{position:relative;z-index:2}
+.hero .wrap,.page-hero .wrap{position:relative;z-index:1}
+
+/* Bouton WhatsApp : plus compact sur mobile, reste dans le coin
+   pour ne pas recouvrir les boutons des bannières */
+@media (max-width:640px){
+  .wa-float{right:16px;bottom:16px;padding:12px}
+  .wa-float svg{width:25px;height:25px}
+  .wa-pulse{right:22px;bottom:22px;width:26px;height:26px}
+  /* marge de sécurité sous les bannières pour dégager la zone du bouton */
+  .cta-band{margin-bottom:8px}
+}
