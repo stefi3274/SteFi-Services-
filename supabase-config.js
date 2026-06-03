@@ -13,8 +13,8 @@
       figurer ici sans danger. Ne mettez JAMAIS la clé "service_role".
    ============================================================ */
 
-const SUPABASE_URL = "VOTRE_URL_SUPABASE";       // ex. https://abcd1234.supabase.co
-const SUPABASE_ANON_KEY = "VOTRE_CLE_ANON";      // longue chaîne commençant par "eyJ..."
+const SUPABASE_URL =  https://darzhfamxnycdglcglgg.supabase.co 
+const SUPABASE_ANON_KEY =   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhcnpoZmFteG55Y2RnbGNnbGdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNDUzNjcsImV4cCI6MjA5NTkyMTM2N30.uHMDHR4df8oYGIqLonLwAgEDzzdu1s7yj7VWtp3KUBQ 
 
 // Ne pas modifier en dessous —————————————————————————————
 const SUPABASE_READY =
