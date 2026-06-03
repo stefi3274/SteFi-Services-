@@ -44,6 +44,7 @@
       loginCard.style.display = "none";
       panel.style.display = "block";
       loadList();
+      loadEntreprises().then(loadDashboard);
     } else {
       loginCard.style.display = "block";
       panel.style.display = "none";
@@ -136,6 +137,73 @@
       });
     });
   }
+
+  // ============================================================
+  //  TABLEAU DE BORD — données des sites clients
+  //  (entreprises + newsletter + messages)
+  // ============================================================
+  let entreprisesMap = {};   // id -> nom
+
+  async function loadEntreprises() {
+    const { data, error } = await db.from("entreprises").select("id,nom").order("nom");
+    if (error) return;
+    entreprisesMap = {};
+    const sel = $("dashEntreprise");
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Toutes les entreprises</option>';
+    (data || []).forEach(e => {
+      entreprisesMap[e.id] = e.nom;
+      const o = document.createElement("option");
+      o.value = e.id; o.textContent = e.nom;
+      sel.appendChild(o);
+    });
+    sel.value = cur;
+  }
+
+  function nomEntreprise(id) { return entreprisesMap[id] || "—"; }
+  function dateFr(s) { return s ? new Date(s).toLocaleString("fr-FR") : ""; }
+
+  async function loadDashboard() {
+    const filtre = $("dashEntreprise").value;
+    const stt = $("dashStatus"); clearStatus(stt);
+
+    // Newsletter
+    let nq = db.from("newsletter").select("*").order("date_inscription", { ascending: false });
+    if (filtre) nq = nq.eq("entreprise_id", filtre);
+    const { data: news, error: e1 } = await nq;
+    const nEl = $("dashNewsletter");
+    if (e1) { nEl.innerHTML = ""; status(stt, "Erreur newsletter : " + e1.message, "err"); }
+    else if (!news || !news.length) { nEl.innerHTML = '<p class="sub">Aucune inscription.</p>'; }
+    else {
+      nEl.innerHTML = `<table class="dash-table"><thead><tr><th>Entreprise</th><th>Email</th><th>Date</th></tr></thead><tbody>${
+        news.map(r => `<tr><td>${escapeHtml(nomEntreprise(r.entreprise_id))}</td><td>${escapeHtml(r.email)}</td><td>${escapeHtml(dateFr(r.date_inscription))}</td></tr>`).join("")
+      }</tbody></table>`;
+    }
+
+    // Messages
+    let mq = db.from("messages").select("*").order("date_envoi", { ascending: false });
+    if (filtre) mq = mq.eq("entreprise_id", filtre);
+    const { data: msgs, error: e2 } = await mq;
+    const mEl = $("dashMessages");
+    if (e2) { mEl.innerHTML = ""; status(stt, "Erreur messages : " + e2.message, "err"); }
+    else if (!msgs || !msgs.length) { mEl.innerHTML = '<p class="sub">Aucun message.</p>'; }
+    else {
+      mEl.innerHTML = msgs.map(r => `
+        <div class="dash-msg">
+          <div class="dash-msg-head">
+            <b>${escapeHtml(r.nom || "—")}</b>
+            <span class="dash-ent">${escapeHtml(nomEntreprise(r.entreprise_id))}</span>
+          </div>
+          <div class="dash-msg-meta">${escapeHtml(r.email || "")} ${r.telephone ? "· " + escapeHtml(r.telephone) : ""} · ${escapeHtml(dateFr(r.date_envoi))}</div>
+          <p class="dash-msg-body">${escapeHtml(r.message || "")}</p>
+        </div>`).join("");
+    }
+  }
+
+  const refBtn = $("refreshData");
+  if (refBtn) refBtn.addEventListener("click", async () => { await loadEntreprises(); loadDashboard(); });
+  const dashSel = $("dashEntreprise");
+  if (dashSel) dashSel.addEventListener("change", loadDashboard);
 
   // Démarrage
   refreshAuth();
