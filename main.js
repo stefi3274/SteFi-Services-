@@ -62,4 +62,24 @@ document.addEventListener("DOMContentLoaded", () => {
       window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texte)}`, "_blank");
     });
   }
+
+  /* ---- PING ANTI-PAUSE SUPABASE ----
+     Un appel silencieux toutes les 72h pour garder le projet actif.
+     Ne fait rien de visible, n'envoie aucune donnée. */
+  (function keepAlive(){
+    if(typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') return;
+    const KEY  = 'stefi_sb_ping';
+    const INTERVAL = 72 * 60 * 60 * 1000; // 72 heures
+    const last = parseInt(localStorage.getItem(KEY) || '0', 10);
+    if(Date.now() - last < INTERVAL) return; // pas encore l'heure
+    fetch(`${SUPABASE_URL}/rest/v1/realisations?limit=1`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+      }
+    })
+    .then(() => localStorage.setItem(KEY, Date.now()))
+    .catch(() => {}); // silence total en cas d'erreur
+  })();
+
 });
